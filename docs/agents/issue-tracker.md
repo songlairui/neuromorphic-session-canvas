@@ -1,32 +1,38 @@
-# Issue tracker: Local Markdown
+# Issue tracker: GitHub Issues
 
-Issues and specs for this repo live as markdown files in `.scratch/`.
+Issues and specs for this repo live as **GitHub issues** on `songlairui/neuromorphic-session-canvas`, managed via the `gh` CLI. Historical local tickets may still exist under `.scratch/` — new work goes to GitHub.
 
-**Seeded by `mainline new` / adopt.** To switch to GitLab/GitHub issues or change labels, run `/setup-work-tracer` (fills blanks; does not wipe this layout unless you choose a different tracker).
+**Upgraded by `/setup-work-tracer` on 2026-11-21** from the init default (local markdown).
 
 ## Conventions
 
-- One feature per directory: `.scratch/<feature-slug>/`
-- The spec is `.scratch/<feature-slug>/spec.md`
-- Implementation issues are one file per ticket at `.scratch/<feature-slug>/issues/<NN>-<slug>.md`, numbered from `01` — never a single combined tickets file
-- Triage state is recorded as a `Status:` line near the top of each issue file (canonical roles: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`)
-- Comments and conversation history append to the bottom of the file under a `## Comments` heading
+- One feature per **GitHub issue**; break work into sub-issues or task lists inside the issue body when needed.
+- Specs that are too large for an issue body live in-repo under `docs/` and are linked from the issue.
+- Triage state is a **label**, not a status line. Canonical roles (see `docs/agents/triage-labels.md`):
+  - `needs-triage` — new, not yet evaluated
+  - `needs-info` — blocked on reporter input
+  - `ready-for-agent` — fully specified, an agent can implement it
+  - `ready-for-human` — requires human judgment or action
+  - `wontfix` — will not be worked on
+- `enhancement` / `bug` / `documentation` may be combined with a triage label.
 
-## When a skill says "publish to the issue tracker"
+## Commands
 
-Create a new file under `.scratch/<feature-slug>/` (creating the directory if needed).
+```bash
+# List open issues
+gh issue list --repo songlairui/neuromorphic-session-canvas
 
-## When a skill says "fetch the relevant ticket"
+# Create an issue
+gh issue create --repo songlairui/neuromorphic-session-canvas \
+  --title "<title>" --body-file <path> --label needs-triage
 
-Read the file at the referenced path. The user will normally pass the path or the issue number directly.
+# Read an issue (body + comments)
+gh issue view <N> --repo songlairui/neuromorphic-session-canvas --comments
 
-## Wayfinding operations
+# Comment / label / close
+gh issue comment <N> --repo songlairui/neuromorphic-session-canvas --body "..."
+gh issue edit <N> --repo songlairui/neuromorphic-session-canvas --add-label ready-for-agent
+gh issue close <N> --repo songlairui/neuromorphic-session-canvas
+```
 
-Used by `/wayfinder`. The **map** is a file with one **child** file per ticket.
-
-- **Map**: `.scratch/<effort>/map.md` — the Notes / Decisions-so-far / Fog body.
-- **Child ticket**: `.scratch/<effort>/issues/NN-<slug>.md`, numbered from `01`, with the question in the body. A `Type:` line records the ticket type (`research`/`prototype`/`grilling`/`task`); a `Status:` line records `claimed`/`resolved`.
-- **Blocking**: a `Blocked by: NN, NN` line near the top. A ticket is unblocked when every file it lists is `resolved`.
-- **Frontier**: scan `.scratch/<effort>/issues/` for files that are open, unblocked, and unclaimed; first by number wins.
-- **Claim**: set `Status: claimed` and save before any work.
-- **Resolve**: append the answer under an `## Answer` heading, set `Status: resolved`, then append a context pointer (gist + link) to the map's Decisions-so-far in `map.md`.
+When a skill says "publish to the issue tracker" → `gh issue create`. When it says "fetch the relevant ticket" → `gh issue view <N> --comments`. The user normally passes the issue number directly.
