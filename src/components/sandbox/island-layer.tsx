@@ -62,7 +62,6 @@ export function IslandLayer({
   const [, tr, tf, tl] = top
   const t = PLATFORM_THICKNESS
   const down = (p: Pt): Pt => ({ x: p.x, y: p.y + t })
-  const center = diamondCenter(top)
   const counter = 1 / zoom
 
   const bodyColor = (status: SessionStatus) =>
@@ -88,35 +87,6 @@ export function IslandLayer({
           strokeWidth={1.5}
         />
       </svg>
-
-      {/* island plaque */}
-      <div
-        className="absolute flex items-center gap-1.5 rounded-full border border-white/10 bg-zinc-950/85 px-3 py-1 text-[11px] font-medium whitespace-nowrap text-zinc-200 shadow-lg backdrop-blur-sm"
-        style={{
-          left: center.x,
-          top: center.y - t - 14,
-          transform: `translate(-50%, -100%) scale(${counter})`,
-          transformOrigin: 'bottom center',
-        }}
-      >
-        <span
-          className="inline-block size-2 rounded-full"
-          style={{ background: island.themeColor }}
-        />
-        <span className="max-w-40 truncate">{island.name}</span>
-        <span className="text-zinc-500">{island.sessions.length}</span>
-        <button
-          type="button"
-          title="在此岛屿新建会话"
-          onClick={(e) => {
-            e.stopPropagation()
-            onAddSession(island.id)
-          }}
-          className="ml-0.5 cursor-pointer rounded-full p-0.5 text-zinc-400 transition-colors hover:bg-white/10 hover:text-emerald-300"
-        >
-          <Plus className="size-3.5" />
-        </button>
-      </div>
 
       {island.sessions.map((s) => {
         const status = s.status as SessionStatus
@@ -148,7 +118,7 @@ export function IslandLayer({
         return (
           <div
             key={s.id}
-            className="group absolute left-0 top-0"
+            className="group absolute left-0 top-0 hover:z-20"
             onClick={() => onSessionClick(s)}
             onDoubleClick={() => onSessionDoubleClick(s)}
           >
@@ -231,6 +201,35 @@ export function IslandLayer({
           </div>
         )
       })}
+
+      {/* island plaque */}
+      <div
+        className="absolute z-10 flex items-center gap-1.5 rounded-full border border-white/10 bg-zinc-950/85 px-3 py-1 text-[11px] font-medium whitespace-nowrap text-zinc-200 shadow-lg backdrop-blur-sm"
+        style={{
+          left: tf.x,
+          top: tf.y + t + 10,
+          transform: `translate(-50%, 0) scale(${counter})`,
+          transformOrigin: 'top center',
+        }}
+      >
+        <span
+          className="inline-block size-2 rounded-full"
+          style={{ background: island.themeColor }}
+        />
+        <span className="max-w-40 truncate">{island.name}</span>
+        <span className="text-zinc-500">{island.sessions.length}</span>
+        <button
+          type="button"
+          title="在此岛屿新建会话"
+          onClick={(e) => {
+            e.stopPropagation()
+            onAddSession(island.id)
+          }}
+          className="ml-0.5 cursor-pointer rounded-full p-0.5 text-zinc-400 transition-colors hover:bg-white/10 hover:text-emerald-300"
+        >
+          <Plus className="size-3.5" />
+        </button>
+      </div>
     </div>
   )
 }
