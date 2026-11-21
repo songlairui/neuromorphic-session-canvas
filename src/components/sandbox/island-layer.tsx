@@ -23,7 +23,7 @@ function mixToward(hex: string, target: string, t: number): string {
     const cb = (b >> shift) & 255
     return Math.round(ca + (cb - ca) * t)
   }
-  return `rgb(${ch(16)},${ch(8)},${ch(0)})`
+  return `#${((ch(16) << 16) | (ch(8) << 8) | ch(0)).toString(16).padStart(6, '0')}`
 }
 
 const MUTED = '#4b5563'
@@ -72,7 +72,7 @@ export function IslandLayer({
 
   return (
     <div className="absolute left-0 top-0">
-      <svg className="absolute overflow-visible" width={0} height={0}>
+      <svg className="absolute overflow-visible" width={1} height={1}>
         <polygon
           points={poly([tr, tf, down(tf), down(tr)])}
           fill={shade(island.themeColor, -0.38)}
@@ -152,7 +152,7 @@ export function IslandLayer({
             onClick={() => onSessionClick(s)}
             onDoubleClick={() => onSessionDoubleClick(s)}
           >
-            <svg className="absolute overflow-visible" width={0} height={0}>
+            <svg className="absolute overflow-visible" width={1} height={1}>
               {status !== 'archived' && (
                 <polygon
                   points={poly(ring)}
